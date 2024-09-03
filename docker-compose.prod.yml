@@ -1,0 +1,45 @@
+services:
+
+  nest_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nest_api 
+    restart: always
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    mem_limit: 250m
+
+  postgres:
+    image: postgres
+    container_name: postgresprismaProd
+    restart: always
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+    volumes:
+      - /postgres:/var/lib/postgresql/data
+    mem_limit: 500m
+
+  frontend_nuxt:
+    build:
+      context: .
+      dockerfile: Dockerfile_nuxtjs
+    container_name: frontend_nuxt
+    restart: on-failure
+    ports:
+      - 3001:3001
+    depends_on:
+      - nest_api
+    mem_limit: 250m
+    
+volumes:
+  postgres:
+    name: nest-prisma-docker-db
+
+
